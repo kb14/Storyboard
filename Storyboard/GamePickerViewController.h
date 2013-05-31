@@ -8,8 +8,17 @@
 
 #import <UIKit/UIKit.h>
 
-@interface GamePickerViewController : UITableViewController{
-NSArray *games;
-}
+@class GamePickerViewController;
+
+@protocol GamePickerViewControllerDelegate <NSObject>
+- (void)gamePickerViewController:
+(GamePickerViewController *)controller
+                   didSelectGame:(NSString *)game;
+@end	
+
+@interface GamePickerViewController : UITableViewController
+
+@property (nonatomic, weak) id <GamePickerViewControllerDelegate> delegate;
+@property (nonatomic, strong) NSString *game;
 
 @end

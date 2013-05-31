@@ -13,7 +13,9 @@
 
 @end
 
-@implementation PlayerDetailsViewController
+@implementation PlayerDetailsViewController{
+    NSString *game;
+}
 
 @synthesize delegate;
 
@@ -28,15 +30,9 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
- 
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
+	[super viewDidLoad];
+	self.detailLabel.text = game;
 }
-
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
@@ -52,7 +48,7 @@
 {
     Player *player = [[Player alloc] init];
 	player.name = self.nameTextField.text;
-	player.game = @"Chess";
+	player.game = game;
 	player.rating = 1;
 	[self.delegate playerDetailsViewController:self didAddPlayer:player];
 }
@@ -95,6 +91,17 @@
 }
 */
 
+#pragma mark - GamePickerViewControllerDelegate
+
+- (void)gamePickerViewController:
+(GamePickerViewController *)controller
+                   didSelectGame:(NSString *)theGame
+{
+	game = theGame;
+	self.detailLabel.text = game;
+	[self.navigationController popViewControllerAnimated:YES];
+}
+
 #pragma mark - Table view delegate
 
 - (void)tableView:(UITableView *)tableView
@@ -104,17 +111,29 @@ didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 		[self.nameTextField becomeFirstResponder];
 }
 
-/*- (id)initWithCoder:(NSCoder *)aDecoder
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+	if ([segue.identifier isEqualToString:@"PickGame"])
+	{
+		GamePickerViewController *gamePickerViewController =
+        segue.destinationViewController;
+		gamePickerViewController.delegate = self;
+		gamePickerViewController.game = game;
+	}
+}
+
+
+- (id)initWithCoder:(NSCoder *)aDecoder
 {
 	if ((self = [super initWithCoder:aDecoder]))
 	{
 		NSLog(@"init PlayerDetailsViewController");
+        game = @"Chess";
 	}
 	return self;
 }
 - (void)dealloc
 {
 	NSLog(@"dealloc PlayerDetailsViewController");
-}*/
-
+}
 @end

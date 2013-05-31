@@ -12,7 +12,13 @@
 
 @end
 
-@implementation GamePickerViewController
+@implementation GamePickerViewController{
+    NSArray *games;
+    NSUInteger selectedIndex;
+}
+
+@synthesize game;
+@synthesize delegate;
 
 - (id)initWithStyle:(UITableViewStyle)style
 {
@@ -35,6 +41,9 @@
              @"Texas Hold’em Poker",
              @"Tic-Tac-Toe",
              nil];
+    
+    selectedIndex = [games indexOfObject:self.game];
+
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -77,6 +86,13 @@
     UITableViewCell *cell = [tableView
                              dequeueReusableCellWithIdentifier:@"GameCell"];
 	cell.textLabel.text = [games objectAtIndex:indexPath.row];
+    
+    if (indexPath.row == selectedIndex)
+		cell.accessoryType =
+        UITableViewCellAccessoryCheckmark;
+	else
+		cell.accessoryType = UITableViewCellAccessoryNone;
+    
 	return cell;
 }
 
@@ -123,13 +139,21 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    // Navigation logic may go here. Create and push another view controller.
-    /*
-     <#DetailViewController#> *detailViewController = [[<#DetailViewController#> alloc] initWithNibName:@"<#Nib name#>" bundle:nil];
-     // ...
-     // Pass the selected object to the new view controller.
-     [self.navigationController pushViewController:detailViewController animated:YES];
-     */
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
+	if (selectedIndex != NSNotFound)
+	{
+		UITableViewCell *cell = [tableView
+                                 cellForRowAtIndexPath:[NSIndexPath
+                                                        indexPathForRow:selectedIndex inSection:0]];
+		cell.accessoryType = UITableViewCellAccessoryNone;
+	}
+	selectedIndex = indexPath.row;
+	UITableViewCell *cell =
+    [tableView cellForRowAtIndexPath:indexPath];
+	cell.accessoryType = UITableViewCellAccessoryCheckmark;
+	NSString *theGame = [games objectAtIndex:indexPath.row];
+	[self.delegate gamePickerViewController:self
+                              didSelectGame:theGame];
 }
 
 @end
